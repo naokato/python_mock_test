@@ -13,9 +13,11 @@ class MyTestCase(TestCase):
   @mock.patch('requests.get', side_effect=mocked_requests_get)
   def test_tameshi(self, mock_get):
     # テスト対象のコードを実行します
-    res1 = requests.get('http://yahoo.co.jp')
-    res2 = requests.get('http://example1.com')
+    res1 = requests.get('http://yahoo.co.jp', headers = {'user-agent': 'my-app/0.0.1'})
+    res2 = requests.get('http://example.com')
 
     # 返ってきたResponseオブジェクトのtext属性が期待通りの値を持っているかを確認します
     self.assertEqual(res1.text, {'name': 'yahoo!'})
     self.assertEqual(res2.text, {'name': 'unknown!'})
+    mock_get.assert_any_call('http://yahoo.co.jp', headers = {'user-agent': 'my-app/0.0.1'})
+    mock_get.assert_any_call('http://example.com')
